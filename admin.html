@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة تحكم رمسيس</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body class="admin-body admin-v2-body">
+  <div class="admin-topbar-v2">
+    <div class="admin-topbar-center">مجلة رمسيس</div>
+    <div class="admin-topbar-actions">
+      <a href="index.html" class="topbar-pill">ريميكس ↗</a>
+      <button type="button" class="topbar-pill">جهاز ◫</button>
+      <button type="button" class="topbar-icon">◔</button>
+      <button type="button" class="topbar-icon">✢</button>
+    </div>
+  </div>
+
+  <div id="adminLoginOverlay" class="admin-login-overlay is-visible">
+    <div class="admin-login-backdrop"></div>
+    <div class="admin-login-modal">
+      <button id="closeLoginOverlay" class="admin-login-close" aria-label="إغلاق">×</button>
+      <div class="admin-login-brand">R</div>
+      <h1>تسجيل دخول المشرف</h1>
+      <p>واجهة دخول احترافية للوحة تحكم رمسيس. بيانات الدخول الحالية تجريبية ويمكن ربطها لاحقًا.</p>
+
+      <form id="loginForm" class="admin-login-form">
+        <label>البريد الإلكتروني
+          <input id="loginEmail" type="email" placeholder="admin@example.com" autocomplete="email" />
+        </label>
+        <label>كلمة السر
+          <input id="loginPassword" type="password" placeholder="••••••••••" autocomplete="current-password" />
+        </label>
+        <button type="submit" class="admin-login-submit">دخول</button>
+      </form>
+
+      <div class="admin-login-hint">كلمة السر الافتراضية: <strong>admin123</strong></div>
+    </div>
+  </div>
+
+  <div class="admin-shell-v2">
+    <aside class="admin-sidebar-v2">
+      <div class="admin-sidebar-top">
+        <div class="admin-brand-row">
+          <div class="admin-brand-avatar">R</div>
+          <div>
+            <div class="admin-brand-title">لوحة رمسيس</div>
+            <div class="admin-brand-sub">Super Admin</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="admin-nav-v2">
+        <button class="tab-btn nav-btn-v2 active" data-tab="overview"><span>الرئيسية</span><i>◫</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="articles"><span>المقالات</span><i>▤</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="categories"><span>الأقسام</span><i>☰</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="pages"><span>الصفحات الثابتة</span><i>▣</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="messages"><span>الرسائل والبريد</span><i>✉</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="subscribers"><span>المشتركون</span><i>◌</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="notifications"><span>التنبيهات</span><i>◔</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="users"><span>الحسابات والمدراء</span><i>◐</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="seo"><span>تحسين المحركات SEO</span><i>⊕</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="texts"><span>نصوص الموقع</span><i>T</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="ads"><span>الإعلانات</span><i>▥</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="settings"><span>الإعدادات</span><i>⚙</i></button>
+        <button class="tab-btn nav-btn-v2" data-tab="integration"><span>الربط الفعلي</span><i>∞</i></button>
+      </nav>
+
+      <div class="admin-sidebar-bottom">
+        <div class="admin-user-box">
+          <div>
+            <strong>أحمد سعد</strong>
+            <span>Super Admin</span>
+          </div>
+          <div class="admin-user-icon">f</div>
+        </div>
+        <button id="logoutAdmin" class="logout-link-v2">تسجيل الخروج ⟶</button>
+      </div>
+    </aside>
+
+    <main class="admin-main-v2">
+      <section class="admin-hero-v2">
+        <div>
+          <h1>إدارة المحتوى</h1>
+          <p>تحكم في كل تفاصيل مجلة رمسيس من مكان واحد.</p>
+        </div>
+        <div class="admin-hero-actions">
+          <button id="seedDemo" class="hero-action primary">إضافة سريعة +</button>
+          <button id="exportPdf" class="hero-action muted">تحميل PDF ⭳</button>
+        </div>
+      </section>
+
+      <section class="admin-grid-v2 analytics-grid">
+        <div class="panel tab-panel active" id="overview">
+          <div class="stats-cards-grid admin-stats-v2">
+            <article class="stat-card stat-card-v2 unread">
+              <div class="stat-top"><span class="stat-badge">جديد</span><div class="stat-icon">✉</div></div>
+              <p>رسائل لم تُقرأ</p>
+              <strong id="metricMessages">0</strong>
+            </article>
+            <article class="stat-card stat-card-v2 alert">
+              <div class="stat-top"><span class="stat-badge">15%</span><div class="stat-icon">◔</div></div>
+              <p>مشتركو التنبيهات</p>
+              <strong id="metricSubscribers">0</strong>
+            </article>
+            <article class="stat-card stat-card-v2 articles">
+              <div class="stat-top"><span class="stat-badge">2+</span><div class="stat-icon">▣</div></div>
+              <p>المقالات المنشورة</p>
+              <strong id="metricArticleViews">0</strong>
+            </article>
+            <article class="stat-card stat-card-v2 views">
+              <div class="stat-top"><span class="stat-badge">12%</span><div class="stat-icon">◉</div></div>
+              <p>إجمالي المشاهدات</p>
+              <strong id="metricVisitors">0</strong>
+            </article>
+          </div>
+
+          <div class="dashboard-panels-v2">
+            <section class="activity-panel-v2 glass-panel">
+              <div class="panel-head-v2">
+                <h3>النشاط الأخير</h3>
+              </div>
+              <div id="recentActivityList" class="activity-list activity-list-v2"></div>
+              <button class="outline-full-btn">عرض كل الأحداث</button>
+            </section>
+
+            <section class="chart-panel-v2 glass-panel">
+              <div class="panel-head-v2 panel-head-chart">
+                <h3>تحليل الزيارات</h3>
+                <div class="chart-toolbar-v2">
+                  <select id="dateRange" class="dashboard-select slim-select">
+                    <option value="7">آخر 7 أيام</option>
+                    <option value="30" selected>آخر 30 يومًا</option>
+                    <option value="90">آخر 90 يومًا</option>
+                    <option value="all">من البداية</option>
+                  </select>
+                </div>
+              </div>
+              <div class="chart-wrap-v2"><canvas id="trafficChart"></canvas></div>
+            </section>
+          </div>
+
+          <div class="overview-bottom-v2">
+            <section class="table-card glass-panel">
+              <div class="table-head"><h3>أفضل المقالات أداءً</h3><span id="topArticlesCount">0 مقال</span></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>المقال</th><th>التصنيف</th><th>المشاهدات</th><th>آخر مشاهدة</th></tr></thead>
+                  <tbody id="topArticlesBody"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="mini-cards-v2">
+              <article class="mini-panel glass-panel"><span>مشاهدات الرئيسية</span><strong id="metricHomepageViews">0</strong><small id="metricHomepageSub">-</small></article>
+              <article class="mini-panel glass-panel"><span>متوسط المشاهدات/مقال</span><strong id="metricAvgPerArticle">0</strong><small id="metricAvgSub">-</small></article>
+              <article class="mini-panel glass-panel"><span>آخر رسالة</span><strong id="metricMessagesSub">-</strong><small>رسائل التواصل</small></article>
+              <article class="mini-panel glass-panel"><span>آخر اشتراك</span><strong id="metricSubscribersSub">-</strong><small>النشرة البريدية</small></article>
+            </section>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="articles">
+          <div class="section-title-v2"><h2>المقالات</h2><p id="articlesSummary">-</p></div>
+          <div class="charts-grid-2 charts-grid-v2">
+            <div class="chart-card glass-panel">
+              <div class="chart-head"><h3>ترتيب المقالات بالمشاهدات</h3><p>المقالات الأعلى قراءة أولًا</p></div>
+              <canvas id="articlesBarChart"></canvas>
+            </div>
+            <div class="chart-card glass-panel">
+              <div class="chart-head"><h3>توزيع المشاهدات</h3><p>الرئيسية مقابل المقالات</p></div>
+              <canvas id="viewsSplitChart"></canvas>
+            </div>
+          </div>
+          <div class="table-card glass-panel single-top-gap">
+            <div class="table-head"><h3>كل المقالات</h3><span>أداء كامل للمحتوى</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>العنوان</th><th>القسم</th><th>المشاهدات</th><th>النسبة</th><th>آخر مشاهدة</th></tr></thead>
+                <tbody id="articlesPerformanceBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="categories">
+          <div class="section-title-v2"><h2>الأقسام</h2><p>إدارة أقسام الصفحة الرئيسية والمجلة.</p></div>
+          <div class="charts-grid-2 charts-grid-v2">
+            <div class="chart-card glass-panel">
+              <div class="chart-head"><h3>مشاهدات الأقسام</h3><p>يعكس أداء كل قسم</p></div>
+              <canvas id="categoriesChart"></canvas>
+            </div>
+            <div class="table-card glass-panel compact-card">
+              <div class="table-head"><h3>إضافة قسم جديد</h3><span>إضافة، ترتيب، إخفاء</span></div>
+              <div class="categories-create-grid">
+                <label>اسم القسم<input type="text" id="newCategoryLabel" placeholder="مثال: الاقتصاد" /></label>
+                <label>Slug القسم<input type="text" id="newCategorySlug" placeholder="business" /></label>
+                <label class="full-span">وصف القسم<textarea id="newCategoryDesc" placeholder="وصف مختصر يظهر داخل بطاقة القسم"></textarea></label>
+                <button id="addCategoryBtn" class="primary-btn full-btn" type="button">إضافة القسم</button>
+              </div>
+            </div>
+          </div>
+          <div class="table-card glass-panel single-top-gap">
+            <div class="table-head"><h3>الأقسام الحالية</h3><span>مزامنة مع واجهة الموقع</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>القسم</th><th>Slug</th><th>عدد المقالات</th><th>المشاهدات</th><th>الوصف</th></tr></thead>
+                <tbody id="categoriesBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="table-card glass-panel single-top-gap">
+            <div class="table-head"><h3>محرر الأقسام</h3><span>ترتيب وظهور الأقسام</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>الاسم</th><th>Slug</th><th>الوصف</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                <tbody id="categoriesManagerBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="pages">
+          <div class="section-title-v2"><h2>الصفحات الثابتة</h2><p>إدارة صفحات من نحن، سياسة الخصوصية، الشروط، وصفحات الهبوط.</p></div>
+          <div class="quick-grid-v2">
+            <article class="quick-card glass-panel"><strong>من نحن</strong><span>تعديل النصوص والمحتوى التعريفي</span></article>
+            <article class="quick-card glass-panel"><strong>اتصل بنا</strong><span>مزامنة البيانات والنماذج</span></article>
+            <article class="quick-card glass-panel"><strong>سياسة الخصوصية</strong><span>صفحات قانونية جاهزة للضبط</span></article>
+            <article class="quick-card glass-panel"><strong>صفحات خاصة</strong><span>صفحات حملات واشتراكات</span></article>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="messages">
+          <div class="section-title-v2"><h2>الرسائل والبريد</h2><p>كل رسائل التواصل والاستفسارات في مكان واحد.</p></div>
+          <div id="messagesList" class="messages-list"></div>
+        </div>
+
+        <div class="panel tab-panel" id="subscribers">
+          <div class="section-title-v2"><h2>المشتركون</h2><p>قائمة المشتركين في النشرة الأسبوعية.</p></div>
+          <div class="table-card glass-panel">
+            <div class="table-head"><h3>قائمة المشتركين</h3><span>تصدير وفلترة</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>البريد الإلكتروني</th><th>المصدر</th><th>تاريخ الاشتراك</th></tr></thead>
+                <tbody id="subscribersBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="notifications">
+          <div class="section-title-v2"><h2>التنبيهات</h2><p>ملخص سريع للأحداث والتنبيهات الحرجة.</p></div>
+          <div class="quick-grid-v2">
+            <article class="quick-card glass-panel"><strong>إشعارات النشر</strong><span>مقال جديد أو مجدول</span></article>
+            <article class="quick-card glass-panel"><strong>تنبيهات البريد</strong><span>رسائل جديدة من الزوار</span></article>
+            <article class="quick-card glass-panel"><strong>تنبيهات الأداء</strong><span>ارتفاع أو هبوط في الزيارات</span></article>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="users">
+          <div class="section-title-v2"><h2>الحسابات والمدراء</h2><p>إدارة الصلاحيات والأدوار داخل فريق التحرير.</p></div>
+          <div class="quick-grid-v2">
+            <article class="quick-card glass-panel"><strong>Super Admin</strong><span>صلاحيات كاملة</span></article>
+            <article class="quick-card glass-panel"><strong>Editor</strong><span>تحرير ونشر المقالات</span></article>
+            <article class="quick-card glass-panel"><strong>Author</strong><span>كتابة المسودات فقط</span></article>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="seo">
+          <div class="section-title-v2"><h2>تحسين المحركات SEO</h2><p>تهيئة العناوين والوصف والروابط المنظمة للمجلة.</p></div>
+          <div class="quick-grid-v2">
+            <article class="quick-card glass-panel"><strong>Meta Title</strong><span>عناوين محسنة للصفحات والمقالات</span></article>
+            <article class="quick-card glass-panel"><strong>Meta Description</strong><span>وصف احترافي للمقتطفات</span></article>
+            <article class="quick-card glass-panel"><strong>Sitemap / Robots</strong><span>ربط وفهرسة أفضل</span></article>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="texts">
+          <div class="section-title-v2"><h2>نصوص الموقع</h2><p>إدارة النصوص الرئيسية في الواجهة الأمامية.</p></div>
+          <div class="settings-grid">
+            <label>اسم الموقع<input type="text" id="siteName" /></label>
+            <label>وصف الموقع<textarea id="siteTag"></textarea></label>
+            <label>عنوان الهيرو<input type="text" id="heroTitleInput" /></label>
+            <label>تصنيف الهيرو<input type="text" id="heroCategoryInput" /></label>
+            <label class="full-span">وصف الهيرو<textarea id="heroDescInput"></textarea></label>
+            <label>رابط صورة الهيرو<input type="text" id="heroImageInput" /></label>
+            <label>عنوان من نحن<input type="text" id="aboutTitleInput" /></label>
+            <label class="full-span">نص من نحن<textarea id="aboutTextInput"></textarea></label>
+            <label>عنوان النشرة<input type="text" id="newsletterTitleInput" /></label>
+            <label class="full-span">نص النشرة<textarea id="newsletterTextInput"></textarea></label>
+            <label>اللون الأساسي<input type="color" id="primaryColor" /></label>
+            <label>لون الخلفية الداكنة<input type="color" id="darkColor" /></label>
+            <label>لون البطاقات<input type="color" id="surfaceColor" /></label>
+            <label class="full-span">روابط التواصل (سطر لكل رابط)<textarea id="socialLinksInput"></textarea></label>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="ads">
+          <div class="section-title-v2"><h2>الإعلانات</h2><p>أماكن إعلانية للمستقبل وربط الحملات والتحويلات.</p></div>
+          <div class="quick-grid-v2">
+            <article class="quick-card glass-panel"><strong>Header Banner</strong><span>مساحة علوية رئيسية</span></article>
+            <article class="quick-card glass-panel"><strong>In-Article Ads</strong><span>بين فقرات المقال</span></article>
+            <article class="quick-card glass-panel"><strong>Sidebar Slots</strong><span>إعلانات جانبية احترافية</span></article>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="settings">
+          <div class="section-title-v2"><h2>الإعدادات</h2><p>أوامر سريعة وتحكم عام في اللوحة.</p></div>
+          <div class="quick-grid-v2">
+            <button id="exportSubscribers" class="quick-card glass-panel quick-action" type="button"><strong>تصدير المشتركين CSV</strong><span>تحميل بيانات البريد</span></button>
+            <button id="exportMessages" class="quick-card glass-panel quick-action" type="button"><strong>تصدير الرسائل CSV</strong><span>تحميل رسائل التواصل</span></button>
+            <button id="clearAnalytics" class="quick-card glass-panel quick-action danger-action" type="button"><strong>مسح البيانات المحلية</strong><span>تنظيف البيانات التجريبية</span></button>
+            <button id="saveSettings" class="quick-card glass-panel quick-action" type="button"><strong>حفظ إعدادات الموقع</strong><span>حفظ النصوص والألوان والأقسام</span></button>
+          </div>
+        </div>
+
+        <div class="panel tab-panel" id="integration">
+          <div class="section-title-v2"><h2>الربط الفعلي</h2><p>ربط Supabase والبيانات الحقيقية.</p></div>
+          <div class="integration-note glass-panel">
+            <p><strong>تم تجهيز الربط داخل الكود بالفعل.</strong> الملف <code>supabase-config.js</code> يحتوي على رابط مشروعك ومفتاح النشر العام.</p>
+            <p><strong>المطلوب المتبقي مرة واحدة فقط:</strong> تشغيل ملف <code>supabase-setup.sql</code> داخل SQL Editor في Supabase حتى يتم إنشاء الجداول والسياسات.</p>
+            <p><strong>الجداول المستخدمة:</strong> <code>page_views</code> و <code>newsletter_subscribers</code> و <code>contact_messages</code> و <code>site_sections</code>.</p>
+            <p><strong>مهم:</strong> لا تضع أي مفتاح سري داخل GitHub Pages. هذه النسخة تستخدم المفتاح العام فقط.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="pdfReport" class="pdf-report"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="data.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
